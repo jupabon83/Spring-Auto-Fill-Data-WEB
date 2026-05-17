@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spring Auto Fill Data</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <span class="logo-icon">⚙</span>
+      <div>
+        <h1>Spring Auto Fill Data</h1>
+        <p>Caesar II → Spring Data Sheet Generator</p>
+      </div>
+    </div>
+    <div class="header-steps">
+      <div class="step-indicator active" id="ind-1"><span>1</span> Upload</div>
+      <div class="step-divider"></div>
+      <div class="step-indicator" id="ind-2"><span>2</span> Review</div>
+      <div class="step-divider"></div>
+      <div class="step-indicator" id="ind-3"><span>3</span> Sheets</div>
+    </div>
+  </div>
+</header>
+
+<main class="app-main">
+
+  <!-- STEP 1: Upload -->
+  <section class="step-section" id="step-1">
+    <div class="step-header">
+      <h2>Upload Caesar II Files</h2>
+      <p>Upload your spring hanger report(s) and the element data file exported from Caesar II.</p>
+    </div>
+
+    <div class="upload-grid">
+      <!-- Spring Data Files -->
+      <div class="upload-card">
+        <div class="upload-card-header">
+          <div class="upload-icon">📄</div>
+          <div>
+            <h3>Spring Data Files</h3>
+            <p>Caesar II Hanger Report — one or more <code>.txt</code> files</p>
+          </div>
+        </div>
+        <div class="drop-zone" id="spring-drop">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+          </svg>
+          <p>Drag &amp; drop here</p>
+          <span>or</span>
+          <label class="btn-browse" id="spring-browse-btn">Browse files</label>
+          <input type="file" id="spring-files-input" multiple accept=".txt" style="display:none">
+        </div>
+        <ul class="file-list" id="spring-file-list"></ul>
+      </div>
+
+      <!-- Element Data File -->
+      <div class="upload-card">
+        <div class="upload-card-header">
+          <div class="upload-icon">📋</div>
+          <div>
+            <h3>Element Data File</h3>
+            <p>Caesar II Input Listing / Element Data — one <code>.txt</code> file</p>
+          </div>
+        </div>
+        <div class="drop-zone" id="eledata-drop">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+          </svg>
+          <p>Drag &amp; drop here</p>
+          <span>or</span>
+          <label class="btn-browse" id="eledata-browse-btn">Browse file</label>
+          <input type="file" id="eledata-file-input" accept=".txt" style="display:none">
+        </div>
+        <div class="file-single" id="eledata-file-name"></div>
+      </div>
+
+      <!-- Restraint Report File -->
+      <div class="upload-card">
+        <div class="upload-card-header">
+          <div class="upload-icon">📊</div>
+          <div>
+            <h3>Restraint Summary Extended</h3>
+            <p>Caesar II Restraint Report — one <code>.txt</code> file <span class="badge-optional">Optional</span></p>
+          </div>
+        </div>
+        <div class="drop-zone" id="restraint-drop">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+          </svg>
+          <p>Drag &amp; drop here</p>
+          <span>or</span>
+          <label class="btn-browse" id="restraint-browse-btn">Browse file</label>
+          <input type="file" id="restraint-file-input" accept=".txt" style="display:none">
+        </div>
+        <div class="file-single" id="restraint-file-name"></div>
+      </div>
+    </div>
+
+    <!-- Global Settings -->
+    <div class="settings-card">
+      <h3>Project Settings</h3>
+      <div class="settings-grid">
+        <div class="field-group">
+          <label>Project Name</label>
+          <input type="text" id="project-name" placeholder="e.g. Pipeline Stress Analysis">
+        </div>
+        <div class="field-group">
+          <label>Calc. Title</label>
+          <input type="text" id="calc-title" placeholder="e.g. Spring Hanger Design">
+        </div>
+        <div class="field-group">
+          <label>Design By</label>
+          <input type="text" id="design-by" placeholder="Initials">
+        </div>
+        <div class="field-group">
+          <label>Checked By</label>
+          <input type="text" id="checked-by" placeholder="Initials">
+        </div>
+        <div class="field-group">
+          <label>Date</label>
+          <input type="text" id="sheet-date" placeholder="e.g. 2026-05-15">
+        </div>
+        <div class="field-group">
+          <label>Fluid</label>
+          <input type="text" id="fluid" placeholder="e.g. Crude Oil" value="Crude Oil">
+        </div>
+        <div class="field-group">
+          <label>Hydrotest Load Case</label>
+          <input type="text" id="hydro-case" placeholder="e.g. 3(OPE)" value="3(OPE)">
+        </div>
+        <div class="field-group">
+          <label>Design Temp Case</label>
+          <input type="text" id="temp1-case" placeholder="e.g. 3(OPE)" value="3(OPE)">
+        </div>
+        <div class="field-group">
+          <label>Oper. Temp Case</label>
+          <input type="text" id="temp2-case" placeholder="e.g. 5(OPE)" value="5(OPE)">
+        </div>
+        <div class="field-group">
+          <label>Min Temp Case</label>
+          <input type="text" id="temp3-case" placeholder="e.g. 7(OPE)" value="7(OPE)">
+        </div>
+      </div>
+    </div>
+
+    <div class="step-actions">
+      <button class="btn-primary" id="process-btn" disabled>
+        Process Files →
+      </button>
+      <span class="process-hint" id="process-hint">Upload at least the spring data file to continue</span>
+    </div>
+  </section>
+
+  <!-- STEP 2: Spring Table Review -->
+  <section class="step-section hidden" id="step-2">
+    <div class="step-header">
+      <h2>Spring Table — Review</h2>
+      <p>Verify the parsed data before generating the data sheets. Click any row to edit values.</p>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="springtable" id="springtable">
+        <thead>
+          <tr>
+            <th>Tag</th>
+            <th>Node</th>
+            <th>Type</th>
+            <th>Fig. No.</th>
+            <th>Size</th>
+            <th>Vert. Mov. (mm)</th>
+            <th>Hot Load (N)</th>
+            <th>Theo. Inst. Load (N)</th>
+            <th>Spring Rate (N/cm)</th>
+            <th>Manufacturer</th>
+            <th>Diameter (mm)</th>
+            <th>Insul. Thick. (mm)</th>
+            <th>Design Temp</th>
+            <th>Oper. Temp</th>
+            <th>Min Temp</th>
+            <th>Material</th>
+            <th>Line No.</th>
+            <th>Hydro Load (N)</th>
+          </tr>
+        </thead>
+        <tbody id="springtable-body"></tbody>
+      </table>
+    </div>
+
+    <div class="step-actions">
+      <button class="btn-secondary" id="back-to-upload">← Back</button>
+      <button class="btn-primary" id="generate-sheets-btn">Generate Sheets →</button>
+    </div>
+  </section>
+
+  <!-- STEP 3: Spring Sheets -->
+  <section class="step-section hidden" id="step-3">
+    <div class="step-header-row">
+      <div>
+        <h2>Spring Data Sheets</h2>
+        <p>Review each sheet. All fields are editable.</p>
+      </div>
+      <div class="export-actions">
+        <button class="btn-secondary" id="back-to-table">← Back</button>
+        <button class="btn-export" id="export-pdf-btn">🖨 Print / Save PDF</button>
+      </div>
+    </div>
+
+    <div class="sheet-tabs" id="sheet-tabs"></div>
+    <div class="sheet-container" id="sheet-container"></div>
+  </section>
+
+</main>
+
+<script src="js/parsers.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
