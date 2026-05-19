@@ -146,6 +146,46 @@
           <input type="text" id="temp3-case" placeholder="e.g. 7(OPE)" value="7(OPE)">
         </div>
       </div>
+
+      <!-- Units sub-section -->
+      <div class="units-divider"><span>Units</span></div>
+      <div class="units-grid">
+        <div class="field-group">
+          <label>Forces</label>
+          <select id="unit-force">
+            <option value="N">N — Newtons</option>
+            <option value="lb">lb — Pounds-force</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Displacements / Lengths</label>
+          <select id="unit-length">
+            <option value="mm">mm — Millimeters</option>
+            <option value="in">in — Inches</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Diameter</label>
+          <select id="unit-diam">
+            <option value="mm">mm — Millimeters</option>
+            <option value="in">in — Inches</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Spring Rate</label>
+          <select id="unit-rate">
+            <option value="N/cm">N/cm</option>
+            <option value="lb/in">lb/in</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Temperature</label>
+          <select id="unit-temp">
+            <option value="°C">°C — Celsius</option>
+            <option value="°F">°F — Fahrenheit</option>
+          </select>
+        </div>
+      </div>
     </div>
 
     <div class="step-actions">
@@ -172,19 +212,19 @@
             <th>Type</th>
             <th>Fig. No.</th>
             <th>Size</th>
-            <th>Vert. Mov. (mm)</th>
-            <th>Hot Load (N)</th>
-            <th>Theo. Inst. Load (N)</th>
-            <th>Spring Rate (N/cm)</th>
+            <th id="th-vertmov">Vert. Mov. (mm)</th>
+            <th id="th-hotload">Hot Load (N)</th>
+            <th id="th-instload">Theo. Inst. Load (N)</th>
+            <th id="th-rate">Spring Rate (N/cm)</th>
             <th>Manufacturer</th>
-            <th>Diameter (mm)</th>
-            <th>Insul. Thick. (mm)</th>
-            <th>Design Temp</th>
-            <th>Oper. Temp</th>
-            <th>Min Temp</th>
+            <th id="th-diam">Diameter (mm)</th>
+            <th id="th-insul">Insul. Thick. (mm)</th>
+            <th id="th-temp1">Design Temp (°C)</th>
+            <th id="th-temp2">Oper. Temp (°C)</th>
+            <th id="th-temp3">Min Temp (°C)</th>
             <th>Material</th>
             <th>Line No.</th>
-            <th>Hydro Load (N)</th>
+            <th id="th-hydro">Hydro Load (N)</th>
           </tr>
         </thead>
         <tbody id="springtable-body"></tbody>

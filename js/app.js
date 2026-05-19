@@ -195,6 +195,23 @@ function processFiles() {
 
 /* ── Spring Table ──────────────────────────────────────────── */
 function renderSpringTable() {
+  // Update table column headers to reflect selected units
+  const uF = $('unit-force').value  || 'N';
+  const uL = $('unit-length').value || 'mm';
+  const uD = $('unit-diam').value   || 'mm';
+  const uR = $('unit-rate').value   || 'N/cm';
+  const uT = $('unit-temp').value   || '°C';
+  $('th-vertmov').textContent  = `Vert. Mov. (${uL})`;
+  $('th-hotload').textContent  = `Hot Load (${uF})`;
+  $('th-instload').textContent = `Theo. Inst. Load (${uF})`;
+  $('th-rate').textContent     = `Spring Rate (${uR})`;
+  $('th-diam').textContent     = `Diameter (${uD})`;
+  $('th-insul').textContent    = `Insul. Thick. (${uL})`;
+  $('th-temp1').textContent    = `Design Temp (${uT})`;
+  $('th-temp2').textContent    = `Oper. Temp (${uT})`;
+  $('th-temp3').textContent    = `Min Temp (${uT})`;
+  $('th-hydro').textContent    = `Hydro Load (${uF})`;
+
   const tbody = $('springtable-body');
   tbody.innerHTML = '';
   state.springs.forEach(s => {
@@ -235,6 +252,14 @@ function generateSheets() {
   tabsEl.innerHTML      = '';
   containerEl.innerHTML = '';
 
+  const units = {
+    force:  $('unit-force').value  || 'N',
+    length: $('unit-length').value || 'mm',
+    diam:   $('unit-diam').value   || 'mm',
+    rate:   $('unit-rate').value   || 'N/cm',
+    temp:   $('unit-temp').value   || '°C',
+  };
+
   const globals = {
     projectName: $('project-name').value,
     calcTitle:   $('calc-title').value,
@@ -242,6 +267,7 @@ function generateSheets() {
     checkedBy:   $('checked-by').value,
     date:        $('sheet-date').value,
     fluid:       $('fluid').value || 'Crude Oil',
+    units,
   };
 
   state.springs.forEach((spring, idx) => {
@@ -273,6 +299,11 @@ function activateSheet(idx) {
 function buildSheetHTML(s, g) {
   const isVariable = s.type === 'Variable' || s.type === 'Variable (User)';
   const isConstant = s.type === 'Constant';
+  const uF = g.units?.force  || 'N';
+  const uL = g.units?.length || 'mm';
+  const uD = g.units?.diam   || 'mm';
+  const uR = g.units?.rate   || 'N/cm';
+  const uT = g.units?.temp   || '°C';
 
   // Hydro load: from cross-reference; for constant springs default to -(hotLoad)
   const hydroLoad = s.hydroLoad !== null ? s.hydroLoad
@@ -355,7 +386,7 @@ function buildSheetHTML(s, g) {
           <input value="${fmtV(s.temp1)}" style="width:70px" placeholder="Des">
           <span class="unit">/</span>
           <input value="${fmtV(s.temp3)}" style="width:70px" placeholder="Min">
-          <span class="unit">°</span>
+          <span class="unit">${escHtml(uT)}</span>
         </div>
       </div>
       <div class="ds-cell">
@@ -365,10 +396,10 @@ function buildSheetHTML(s, g) {
         </div>
       </div>
       <div class="ds-cell">
-        <div class="ds-label">Spring Rate (N/cm)</div>
+        <div class="ds-label">Spring Rate (${escHtml(uR)})</div>
         <div class="ds-value">
           <input value="${fmtV(s.springRate)}" ${isConstant ? 'placeholder="N/A"' : ''}>
-          ${!isConstant ? '<span class="unit">N/cm</span>' : ''}
+          ${!isConstant ? `<span class="unit">${escHtml(uR)}</span>` : ''}
         </div>
       </div>
       <div class="ds-cell">
@@ -387,7 +418,7 @@ function buildSheetHTML(s, g) {
         <div class="ds-label">Operating (Hot) Load</div>
         <div class="ds-value">
           <input value="${fmtV(s.hotLoad)}" style="width:100px">
-          <span class="unit">N</span>
+          <span class="unit">${escHtml(uF)}</span>
         </div>
       </div>
       ${isVariable ? `
@@ -395,21 +426,21 @@ function buildSheetHTML(s, g) {
         <div class="ds-label">Installed Load (Theoretical)</div>
         <div class="ds-value">
           <input value="${fmtV(s.theoInstLoad)}" style="width:100px">
-          <span class="unit">N</span>
+          <span class="unit">${escHtml(uF)}</span>
         </div>
       </div>` : ''}
       <div class="ds-cell">
         <div class="ds-label">Pipe Oper. Temperature</div>
         <div class="ds-value">
           <input value="${fmtV(s.temp2)}" style="width:80px">
-          <span class="unit">°</span>
+          <span class="unit">${escHtml(uT)}</span>
         </div>
       </div>
       <div class="ds-cell">
-        <div class="ds-label">Pipe Size — OD (mm)</div>
+        <div class="ds-label">Pipe Size — OD (${escHtml(uD)})</div>
         <div class="ds-value">
           <input value="${fmtV(s.diameter)}" style="width:90px">
-          <span class="unit">mm</span>
+          <span class="unit">${escHtml(uD)}</span>
         </div>
       </div>
     </div>
@@ -433,7 +464,7 @@ function buildSheetHTML(s, g) {
         <div class="ds-label">Hydro-Test Load</div>
         <div class="ds-value">
           <input value="${fmtV(hydroLoad)}" style="width:100px">
-          <span class="unit">N</span>
+          <span class="unit">${escHtml(uF)}</span>
         </div>
       </div>
       <div class="ds-cell">
@@ -454,7 +485,7 @@ function buildSheetHTML(s, g) {
         <div class="ds-label">Insulation Thickness</div>
         <div class="ds-value">
           <input value="${fmtV(s.insulThick)}" style="width:80px">
-          <span class="unit">mm</span>
+          <span class="unit">${escHtml(uL)}</span>
         </div>
       </div>
       <div class="ds-cell">
@@ -471,7 +502,7 @@ function buildSheetHTML(s, g) {
         <span class="unit" style="font-size:13px;font-weight:700;color:#c5d0e8">|</span>
         <span class="unit">ACTUAL TRAVEL VERT.:</span>
         <input value="${fmtV(s.vertMov)}" style="width:100px">
-        <span class="unit">mm</span>
+        <span class="unit">${escHtml(uL)}</span>
       </div>
       <div class="ds-node-right">
         <span class="ds-tag-label">Spring Tag No.</span>
