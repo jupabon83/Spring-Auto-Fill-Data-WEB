@@ -29,8 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('sheet-date').value = new Date().toISOString().slice(0, 10);
 
-  $('add-spring-row-btn').addEventListener('click', () => addPreviewRow());
-  initPreviewTable(10);   // start with 10 blank rows
+  const addBtn = $('add-spring-row-btn');
+  if (addBtn) addBtn.addEventListener('click', () => addPreviewRow());
+  initPreviewTable(10);
 });
 
 /* ── Spring Preview Table ──────────────────────────────────── */

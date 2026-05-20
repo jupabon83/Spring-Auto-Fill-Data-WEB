@@ -237,6 +237,7 @@ body {
 .preview-table-wrapper { max-height: 340px; overflow-y: auto; border: 1px solid #dde3ee; border-radius: 6px; }
 .preview-table {
   width: 100%; border-collapse: collapse; font-size: 13px;
+  table-layout: fixed;
 }
 .preview-table thead th {
   background: #1a2744; color: #c5d0e8;
