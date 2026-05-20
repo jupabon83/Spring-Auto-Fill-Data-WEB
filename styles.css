@@ -278,6 +278,16 @@ body {
 .col-tag    { width: 130px; }
 .col-type   { width: 140px; }
 .col-node   { width: 100px; }
+.col-del    { width: 36px; }
+.col-del-cell { text-align: center; padding: 2px !important; }
+.btn-del-row {
+  background: none; border: none; cursor: pointer;
+  color: #c0392b; font-size: 14px; font-weight: 700;
+  width: 24px; height: 24px; border-radius: 4px;
+  line-height: 1; padding: 0;
+  transition: background .15s, color .15s;
+}
+.btn-del-row:hover { background: #fde8e8; color: #a52a2a; }
 
 /* ─── Buttons ──────────────────────────────────────────────── */
 .step-actions { display: flex; align-items: center; gap: 12px; }

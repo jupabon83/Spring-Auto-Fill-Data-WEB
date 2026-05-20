@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const addBtn = $('add-spring-row-btn');
   if (addBtn) addBtn.addEventListener('click', () => addPreviewRow());
-  initPreviewTable(10);
+  initPreviewTable(5);
 });
 
 /* ── Spring Preview Table ──────────────────────────────────── */
@@ -56,7 +56,8 @@ function addPreviewRow(data = {}) {
     <td class="row-label">Spring ${idx}</td>
     <td><input type="text" placeholder="SPR-${String(idx).padStart(3,'0')}" value="${escHtml(data.tag || '')}"></td>
     <td><select>${typeOpts}</select></td>
-    <td><input type="text" placeholder="e.g. 1070" value="${escHtml(data.node || '')}"></td>`;
+    <td><input type="text" placeholder="e.g. 1070" value="${escHtml(data.node || '')}"></td>
+    <td class="col-del-cell"><button class="btn-del-row" title="Eliminar fila" onclick="this.closest('tr').remove()">✕</button></td>`;
   tbody.appendChild(tr);
 }
 
@@ -309,12 +310,13 @@ function generateSheets() {
   };
 
   const globals = {
-    projectName: $('project-name').value,
-    calcTitle:   $('calc-title').value,
-    designBy:    $('design-by').value,
-    checkedBy:   $('checked-by').value,
-    date:        $('sheet-date').value,
-    fluid:       $('fluid').value || 'Crude Oil',
+    projectName:  $('project-name').value,
+    calcTitle:    $('calc-title').value,
+    designBy:     $('design-by').value,
+    checkedBy:    $('checked-by').value,
+    date:         $('sheet-date').value,
+    fluid:        $('fluid').value || 'Crude Oil',
+    manufacturer: $('manufacturer').value,
     units,
   };
 
