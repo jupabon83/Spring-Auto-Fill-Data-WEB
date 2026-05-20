@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ── Spring Preview Table ──────────────────────────────────── */
-const TYPE_OPTIONS = ['Variable', 'Constant', 'Variable (User)'];
+const TYPE_OPTIONS = ['Hanger', 'Can'];
 
 function initPreviewTable(rows) {
   const tbody = $('spring-preview-body');
@@ -43,9 +43,9 @@ function initPreviewTable(rows) {
 }
 
 function addPreviewRow(data = {}) {
-  const tbody  = $('spring-preview-body');
-  const idx    = tbody.rows.length + 1;
-  const tr     = document.createElement('tr');
+  const tbody = $('spring-preview-body');
+  const idx   = tbody.rows.length + 1;
+  const tr    = document.createElement('tr');
 
   const typeOpts = TYPE_OPTIONS.map(t =>
     `<option value="${t}" ${data.type === t ? 'selected' : ''}>${t}</option>`
@@ -55,25 +55,8 @@ function addPreviewRow(data = {}) {
     <td class="row-label">Spring ${idx}</td>
     <td><input type="text" placeholder="SPR-${String(idx).padStart(3,'0')}" value="${escHtml(data.tag || '')}"></td>
     <td><select>${typeOpts}</select></td>
-    <td><input type="text" placeholder="Node #" value="${escHtml(data.node || '')}"></td>`;
+    <td><input type="text" placeholder="e.g. 1070" value="${escHtml(data.node || '')}"></td>`;
   tbody.appendChild(tr);
-}
-
-function populatePreviewTable(springs) {
-  const tbody = $('spring-preview-body');
-  const existing = tbody.rows.length;
-  // Fill existing rows first, add more if needed
-  springs.forEach((s, i) => {
-    if (i < existing) {
-      const row = tbody.rows[i];
-      row.cells[1].querySelector('input').value = s.tag  || '';
-      const sel = row.cells[2].querySelector('select');
-      sel.value = TYPE_OPTIONS.includes(s.type) ? s.type : TYPE_OPTIONS[0];
-      row.cells[3].querySelector('input').value = s.node || '';
-    } else {
-      addPreviewRow({ tag: s.tag, type: s.type, node: s.node });
-    }
-  });
 }
 
 function getPreviewTableData() {
@@ -136,9 +119,6 @@ function handleSpringFiles(fileList) {
       state.springFiles.push(...loaded);
       renderSpringFileList();
       updateProcessBtn();
-      // Quick parse to populate the spring preview table
-      const preview = parseSpringFiles(state.springFiles);
-      populatePreviewTable(preview.springs);
     });
 }
 

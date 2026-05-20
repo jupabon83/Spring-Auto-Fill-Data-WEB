@@ -205,9 +205,9 @@ body {
 }
 .settings-left { flex: 1; min-width: 0; }
 .settings-right {
-  width: 220px; flex-shrink: 0;
+  width: 160px; flex-shrink: 0;
   background: #f7f9fd; border: 1px solid #e2e8f4;
-  border-radius: 8px; padding: 16px;
+  border-radius: 8px; padding: 12px;
 }
 .units-header {
   font-size: 11px; font-weight: 700; color: #3b82f6;
@@ -215,7 +215,8 @@ body {
   margin-bottom: 14px; padding-bottom: 8px;
   border-bottom: 1px solid #e2e8f4;
 }
-.units-col { display: flex; flex-direction: column; gap: 12px; }
+.units-col { display: flex; flex-direction: column; gap: 10px; }
+.units-col .field-group select { font-size: 12px; padding: 5px 22px 5px 7px; }
 
 /* Spring preview table card */
 .preview-card-header {
