@@ -28,7 +28,62 @@ document.addEventListener('DOMContentLoaded', () => {
   $('export-pdf-btn').addEventListener('click', () => window.print());
 
   $('sheet-date').value = new Date().toISOString().slice(0, 10);
+
+  $('add-spring-row-btn').addEventListener('click', () => addPreviewRow());
+  initPreviewTable(10);   // start with 10 blank rows
 });
+
+/* ── Spring Preview Table ──────────────────────────────────── */
+const TYPE_OPTIONS = ['Variable', 'Constant', 'Variable (User)'];
+
+function initPreviewTable(rows) {
+  const tbody = $('spring-preview-body');
+  tbody.innerHTML = '';
+  for (let i = 0; i < rows; i++) addPreviewRow();
+}
+
+function addPreviewRow(data = {}) {
+  const tbody  = $('spring-preview-body');
+  const idx    = tbody.rows.length + 1;
+  const tr     = document.createElement('tr');
+
+  const typeOpts = TYPE_OPTIONS.map(t =>
+    `<option value="${t}" ${data.type === t ? 'selected' : ''}>${t}</option>`
+  ).join('');
+
+  tr.innerHTML = `
+    <td class="row-label">Spring ${idx}</td>
+    <td><input type="text" placeholder="SPR-${String(idx).padStart(3,'0')}" value="${escHtml(data.tag || '')}"></td>
+    <td><select>${typeOpts}</select></td>
+    <td><input type="text" placeholder="Node #" value="${escHtml(data.node || '')}"></td>`;
+  tbody.appendChild(tr);
+}
+
+function populatePreviewTable(springs) {
+  const tbody = $('spring-preview-body');
+  const existing = tbody.rows.length;
+  // Fill existing rows first, add more if needed
+  springs.forEach((s, i) => {
+    if (i < existing) {
+      const row = tbody.rows[i];
+      row.cells[1].querySelector('input').value = s.tag  || '';
+      const sel = row.cells[2].querySelector('select');
+      sel.value = TYPE_OPTIONS.includes(s.type) ? s.type : TYPE_OPTIONS[0];
+      row.cells[3].querySelector('input').value = s.node || '';
+    } else {
+      addPreviewRow({ tag: s.tag, type: s.type, node: s.node });
+    }
+  });
+}
+
+function getPreviewTableData() {
+  const tbody = $('spring-preview-body');
+  return Array.from(tbody.rows).map(row => ({
+    tag:  row.cells[1].querySelector('input').value.trim(),
+    type: row.cells[2].querySelector('select').value,
+    node: row.cells[3].querySelector('input').value.trim(),
+  })).filter(r => r.tag || r.node);
+}
 
 /* ── Drop zone setup ───────────────────────────────────────── */
 function setupDropZone(zoneId, inputId, multiple, handler) {
@@ -81,6 +136,9 @@ function handleSpringFiles(fileList) {
       state.springFiles.push(...loaded);
       renderSpringFileList();
       updateProcessBtn();
+      // Quick parse to populate the spring preview table
+      const preview = parseSpringFiles(state.springFiles);
+      populatePreviewTable(preview.springs);
     });
 }
 
@@ -172,12 +230,21 @@ function processFiles() {
     ? parseRestraintReport(state.restraintFile.text)
     : null;
 
+  // 3b. Apply preview table overrides (tag, type, node edited by user)
+  const overrides = getPreviewTableData();
+  overrides.forEach((ov, i) => {
+    if (!state.springs[i]) return;
+    if (ov.tag)  state.springs[i].tag  = ov.tag;
+    if (ov.type) state.springs[i].type = ov.type;
+    if (ov.node) state.springs[i].node = ov.node;
+  });
+
   // 4. Cross-reference
   const settings = {
-    hydroCase: $('hydro-case').value.trim() || '3(OPE)',
-    temp1Case: $('temp1-case').value.trim() || '3(OPE)',
-    temp2Case: $('temp2-case').value.trim() || '5(OPE)',
-    temp3Case: $('temp3-case').value.trim() || '7(OPE)',
+    hydroCase:  $('hydro-case').value.trim() || '3(OPE)',
+    tempDesign: parseInt($('temp-design').value) || 1,
+    tempOper:   parseInt($('temp-oper').value)   || 2,
+    tempMin:    parseInt($('temp-min').value)     || 3,
   };
   crossReference(state.springs, state.eledata, state.restraint, settings);
 

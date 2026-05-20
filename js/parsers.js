@@ -206,6 +206,12 @@ function parseEledata(text) {
     temp1:      findCol('TEMP1', 'T1', 'TEMPERATURE_1', 'TEMPERATURE1', 'DESIGN_TEMP', 'DESIGNTEMP', 'OPER_TEMP1', 'OPERTEMP1'),
     temp2:      findCol('TEMP2', 'T2', 'TEMPERATURE_2', 'TEMPERATURE2', 'OPER_TEMP2', 'OPERTEMP2'),
     temp3:      findCol('TEMP3', 'T3', 'TEMPERATURE_3', 'TEMPERATURE3', 'MIN_TEMP', 'MINTEMP'),
+    temp4:      findCol('TEMP4', 'T4', 'TEMPERATURE_4', 'TEMPERATURE4'),
+    temp5:      findCol('TEMP5', 'T5', 'TEMPERATURE_5', 'TEMPERATURE5'),
+    temp6:      findCol('TEMP6', 'T6', 'TEMPERATURE_6', 'TEMPERATURE6'),
+    temp7:      findCol('TEMP7', 'T7', 'TEMPERATURE_7', 'TEMPERATURE7'),
+    temp8:      findCol('TEMP8', 'T8', 'TEMPERATURE_8', 'TEMPERATURE8'),
+    temp9:      findCol('TEMP9', 'T9', 'TEMPERATURE_9', 'TEMPERATURE9'),
     material:   findCol('MATERIAL', 'MATERIAL_NUMBER', 'MATNO', 'MAT', 'MAT_NO', 'MATERIALNUMBER'),
     lineNo:     findCol('LINE_NUMBER', 'LINENO', 'LINE_NO', 'LINE NO', 'LINENUMBER'),
   };
@@ -249,6 +255,12 @@ function parseEledata(text) {
       temp1:     _fNum(get(COL.temp1)),
       temp2:     _fNum(get(COL.temp2)),
       temp3:     _fNum(get(COL.temp3)),
+      temp4:     _fNum(get(COL.temp4)),
+      temp5:     _fNum(get(COL.temp5)),
+      temp6:     _fNum(get(COL.temp6)),
+      temp7:     _fNum(get(COL.temp7)),
+      temp8:     _fNum(get(COL.temp8)),
+      temp9:     _fNum(get(COL.temp9)),
       material:  get(COL.material) || null,
       lineNo:    COL.lineNo >= 0 ? get(COL.lineNo) : null,
     });
@@ -406,9 +418,13 @@ function crossReference(springs, eledata, restraint, settings = {}) {
       const el = candidates.reduce((best, c) => score(c) > score(best) ? c : best, candidates[0]);
       if (el.diameter   != null) s.diameter   = el.diameter;
       if (el.insulThick != null) s.insulThick = el.insulThick;
-      if (el.temp1      != null) s.temp1      = el.temp1;
-      if (el.temp2      != null) s.temp2      = el.temp2;
-      if (el.temp3      != null) s.temp3      = el.temp3;
+      // Apply temperature column mapping (settings.tempDesign/tempOper/tempMin = 1..9)
+      const tD = el[`temp${settings.tempDesign || 1}`];
+      const tO = el[`temp${settings.tempOper   || 2}`];
+      const tM = el[`temp${settings.tempMin    || 3}`];
+      if (tD != null) s.temp1 = tD;
+      if (tO != null) s.temp2 = tO;
+      if (tM != null) s.temp3 = tM;
       if (el.material)           s.material   = el.material;
       if (el.lineNo)             s.lineNo     = el.lineNo;
     }

@@ -101,90 +101,156 @@
       </div>
     </div>
 
+    <!-- Spring Preview Table -->
+    <div class="settings-card" id="spring-preview-card">
+      <div class="preview-card-header">
+        <h3>Spring List</h3>
+        <span class="badge-optional">Se llena automáticamente al subir el archivo de resortes — editable</span>
+        <button class="btn-add-row" id="add-spring-row-btn">+ Agregar fila</button>
+      </div>
+      <div class="table-wrapper preview-table-wrapper">
+        <table class="preview-table" id="spring-preview-table">
+          <thead>
+            <tr>
+              <th class="col-rownum">#</th>
+              <th class="col-tag">Tag</th>
+              <th class="col-type">Type</th>
+              <th class="col-node">Node</th>
+            </tr>
+          </thead>
+          <tbody id="spring-preview-body"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- Global Settings -->
     <div class="settings-card">
       <h3>Project Settings</h3>
-      <div class="settings-grid">
-        <div class="field-group">
-          <label>Project Name</label>
-          <input type="text" id="project-name" placeholder="e.g. Pipeline Stress Analysis">
-        </div>
-        <div class="field-group">
-          <label>Calc. Title</label>
-          <input type="text" id="calc-title" placeholder="e.g. Spring Hanger Design">
-        </div>
-        <div class="field-group">
-          <label>Design By</label>
-          <input type="text" id="design-by" placeholder="Initials">
-        </div>
-        <div class="field-group">
-          <label>Checked By</label>
-          <input type="text" id="checked-by" placeholder="Initials">
-        </div>
-        <div class="field-group">
-          <label>Date</label>
-          <input type="text" id="sheet-date" placeholder="e.g. 2026-05-15">
-        </div>
-        <div class="field-group">
-          <label>Fluid</label>
-          <input type="text" id="fluid" placeholder="e.g. Crude Oil" value="Crude Oil">
-        </div>
-        <div class="field-group">
-          <label>Hydrotest Load Case</label>
-          <input type="text" id="hydro-case" placeholder="e.g. 3(OPE)" value="3(OPE)">
-        </div>
-        <div class="field-group">
-          <label>Design Temp Case</label>
-          <input type="text" id="temp1-case" placeholder="e.g. 3(OPE)" value="3(OPE)">
-        </div>
-        <div class="field-group">
-          <label>Oper. Temp Case</label>
-          <input type="text" id="temp2-case" placeholder="e.g. 5(OPE)" value="5(OPE)">
-        </div>
-        <div class="field-group">
-          <label>Min Temp Case</label>
-          <input type="text" id="temp3-case" placeholder="e.g. 7(OPE)" value="7(OPE)">
-        </div>
-      </div>
+      <div class="settings-two-col">
 
-      <!-- Units sub-section -->
-      <div class="units-divider"><span>Units</span></div>
-      <div class="units-grid">
-        <div class="field-group">
-          <label>Forces</label>
-          <select id="unit-force">
-            <option value="N">N — Newtons</option>
-            <option value="lb">lb — Pounds-force</option>
-          </select>
+        <!-- LEFT: text inputs -->
+        <div class="settings-left">
+          <div class="settings-grid">
+            <div class="field-group">
+              <label>Project Name</label>
+              <input type="text" id="project-name" placeholder="e.g. Pipeline Stress Analysis">
+            </div>
+            <div class="field-group">
+              <label>Calc. Title</label>
+              <input type="text" id="calc-title" placeholder="e.g. Spring Hanger Design">
+            </div>
+            <div class="field-group">
+              <label>Design By</label>
+              <input type="text" id="design-by" placeholder="Initials">
+            </div>
+            <div class="field-group">
+              <label>Checked By</label>
+              <input type="text" id="checked-by" placeholder="Initials">
+            </div>
+            <div class="field-group">
+              <label>Date</label>
+              <input type="text" id="sheet-date" placeholder="e.g. 2026-05-15">
+            </div>
+            <div class="field-group">
+              <label>Fluid</label>
+              <input type="text" id="fluid" placeholder="e.g. Crude Oil" value="Crude Oil">
+            </div>
+            <div class="field-group">
+              <label>Hydrotest Load Case</label>
+              <input type="text" id="hydro-case" placeholder="e.g. 3(OPE)" value="3(OPE)">
+            </div>
+          </div>
+
+          <!-- Temperature column mapping -->
+          <div class="units-divider"><span>Mapeo de Temperatura (Element Data)</span></div>
+          <div class="settings-grid">
+            <div class="field-group">
+              <label>Design Temperature</label>
+              <select id="temp-design">
+                <option value="1">TEMP 1</option>
+                <option value="2">TEMP 2</option>
+                <option value="3">TEMP 3</option>
+                <option value="4">TEMP 4</option>
+                <option value="5">TEMP 5</option>
+                <option value="6">TEMP 6</option>
+                <option value="7">TEMP 7</option>
+                <option value="8">TEMP 8</option>
+                <option value="9">TEMP 9</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Operational Temperature</label>
+              <select id="temp-oper">
+                <option value="1">TEMP 1</option>
+                <option value="2" selected>TEMP 2</option>
+                <option value="3">TEMP 3</option>
+                <option value="4">TEMP 4</option>
+                <option value="5">TEMP 5</option>
+                <option value="6">TEMP 6</option>
+                <option value="7">TEMP 7</option>
+                <option value="8">TEMP 8</option>
+                <option value="9">TEMP 9</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Minimum Temperature</label>
+              <select id="temp-min">
+                <option value="1">TEMP 1</option>
+                <option value="2">TEMP 2</option>
+                <option value="3" selected>TEMP 3</option>
+                <option value="4">TEMP 4</option>
+                <option value="5">TEMP 5</option>
+                <option value="6">TEMP 6</option>
+                <option value="7">TEMP 7</option>
+                <option value="8">TEMP 8</option>
+                <option value="9">TEMP 9</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div class="field-group">
-          <label>Displacements / Lengths</label>
-          <select id="unit-length">
-            <option value="mm">mm — Millimeters</option>
-            <option value="in">in — Inches</option>
-          </select>
+
+        <!-- RIGHT: units column -->
+        <div class="settings-right">
+          <div class="units-header">Unidades</div>
+          <div class="units-col">
+            <div class="field-group">
+              <label>Forces</label>
+              <select id="unit-force">
+                <option value="N">N — Newtons</option>
+                <option value="lb">lb — Pounds-force</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Displacements / Lengths</label>
+              <select id="unit-length">
+                <option value="mm">mm — Millimeters</option>
+                <option value="in">in — Inches</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Diameter</label>
+              <select id="unit-diam">
+                <option value="mm">mm — Millimeters</option>
+                <option value="in">in — Inches</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Spring Rate</label>
+              <select id="unit-rate">
+                <option value="N/cm">N/cm</option>
+                <option value="lb/in">lb/in</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Temperature</label>
+              <select id="unit-temp">
+                <option value="°C">°C — Celsius</option>
+                <option value="°F">°F — Fahrenheit</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div class="field-group">
-          <label>Diameter</label>
-          <select id="unit-diam">
-            <option value="mm">mm — Millimeters</option>
-            <option value="in">in — Inches</option>
-          </select>
-        </div>
-        <div class="field-group">
-          <label>Spring Rate</label>
-          <select id="unit-rate">
-            <option value="N/cm">N/cm</option>
-            <option value="lb/in">lb/in</option>
-          </select>
-        </div>
-        <div class="field-group">
-          <label>Temperature</label>
-          <select id="unit-temp">
-            <option value="°C">°C — Celsius</option>
-            <option value="°F">°F — Fahrenheit</option>
-          </select>
-        </div>
+
       </div>
     </div>
 
