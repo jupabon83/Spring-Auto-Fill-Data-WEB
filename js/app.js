@@ -272,7 +272,8 @@ function renderSpringTable() {
       <td><strong>${escHtml(s.tag)}</strong></td>
       <td>${escHtml(s.node)}</td>
       <td><span class="type-badge ${typeBadgeClass(s.type)}">${escHtml(s.type)}</span></td>
-      <td>${escHtml(s.figNo || '—')}</td>
+      <td>${escHtml(s.catalogType || '—')}</td>
+      <td>${escHtml(s.numRqd != null ? String(s.numRqd) : '—')}</td>
       <td>${escHtml(s.size  || '—')}</td>
       <td>${fmt(s.vertMov)}</td>
       <td>${fmt(s.hotLoad)}</td>
@@ -394,7 +395,7 @@ function buildSheetHTML(s, g) {
   <!-- ── Tag / Qty bar ── -->
   <div class="ds-tag-bar">
     <div class="ds-tag-item"><span class="ds-tag-lbl">Spring Tag No.</span><input class="ds-tag-inp" value="${escHtml(s.tag)}"></div>
-    <div class="ds-tag-item"><span class="ds-tag-lbl">Q'ty</span><input class="ds-tag-inp" value="${escHtml(String(s.numRqd || 1))}" style="width:50px"></div>
+    <div class="ds-tag-item"><span class="ds-tag-lbl">Q'ty of Assembly</span><input class="ds-tag-inp" value="${escHtml(String(s.numRqd != null ? s.numRqd : 1))}" style="width:60px"></div>
     <div class="ds-tag-item"><span class="ds-tag-lbl">Document No.</span><input class="ds-tag-inp" value="" style="width:180px"></div>
   </div>
 
@@ -426,7 +427,7 @@ function buildSheetHTML(s, g) {
     </div>
     <div class="ds-cell" style="grid-column:3/5">
       <div class="ds-lbl">TYPE</div>
-      <input value="${escHtml(s.type)}" readonly style="font-weight:700;color:#1d4ed8">
+      <input value="${escHtml(s.catalogType || '')}" placeholder="(catalog type)">
     </div>
     <div class="ds-cell" style="grid-column:5/7">
       <div class="ds-lbl">HYDRO-TEST LOAD</div>

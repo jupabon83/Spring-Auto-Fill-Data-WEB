@@ -67,7 +67,7 @@ function _parseOneSpringFile(text, filename) {
     const nodeMatch = line.match(/^\s{2,10}(\d{3,6})\s/);
     if (nodeMatch) {
       const node         = nodeMatch[1];
-      const figNo        = _fld(line, colPos, 1).trim();
+      const numRqd       = _fNum(_fld(line, colPos, 1)) || 1;  // RQD column (pos 1)
       const size         = _fld(line, colPos, 2).trim();
       const vertMov      = _fNum(_fld(line, colPos, 3));
       const hotLoad      = _fNum(_fld(line, colPos, 4));
@@ -75,14 +75,13 @@ function _parseOneSpringFile(text, filename) {
       const actInstLoad  = _fNum(_fld(line, colPos, 6));
       const springRate   = _fNum(_fld(line, colPos, 7));
       const horMov       = _fNum(_fld(line, colPos, 8));
-      const numRqd       = _fNum(_fld(line, colPos, 0)) || 1;
 
       let type = 'Variable';
       if (line.includes('CONSTANT EFFORT SUPPORT')) type = 'Constant';
       else if (/USER/i.test(figNo))                 type = 'Variable (User)';
 
       lastSpring = {
-        tag: '', node, numRqd, figNo, size,
+        tag: '', node, numRqd, figNo: '', catalogType: '', size,
         vertMov, hotLoad, theoInstLoad, actInstLoad,
         springRate, horMov, type,
         manufacturer: null, variability: null,
