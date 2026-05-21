@@ -77,8 +77,8 @@ function _parseOneSpringFile(text, filename) {
       const horMov       = _fNum(_fld(line, colPos, 8));
 
       let type = 'Variable';
-      if (line.includes('CONSTANT EFFORT SUPPORT')) type = 'Constant';
-      else if (/USER/i.test(figNo))                 type = 'Variable (User)';
+      if (line.includes('CONSTANT EFFORT SUPPORT'))  type = 'Constant';
+      else if (/USER\s+SPECIFIED/i.test(line))       type = 'Variable (User)';
 
       lastSpring = {
         tag: '', node, numRqd, figNo: '', catalogType: '', size,
