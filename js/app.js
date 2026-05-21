@@ -588,8 +588,14 @@ function buildSheetHTML(s, g) {
 }
 
 /* ── Helpers ───────────────────────────────────────────────── */
-function fmt(v)  { return (v !== null && v !== undefined) ? String(v) : '—'; }
-function fmtV(v) { return (v !== null && v !== undefined) ? String(v) : ''; }
+function fmt(v)  {
+  if (v === null || v === undefined) return '—';
+  return typeof v === 'number' ? v.toFixed(2) : String(v);
+}
+function fmtV(v) {
+  if (v === null || v === undefined) return '';
+  return typeof v === 'number' ? v.toFixed(2) : String(v);
+}
 function formatSize(b) {
   if (b < 1024)        return `${b} B`;
   if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
