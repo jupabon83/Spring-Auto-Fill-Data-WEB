@@ -4,8 +4,9 @@
     {
       "name": "spring-app",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "5050"],
-      "port": 5050
+      "runtimeArgs": ["-m", "http.server"],
+      "port": 5050,
+      "autoPort": true
     }
   ]
 }

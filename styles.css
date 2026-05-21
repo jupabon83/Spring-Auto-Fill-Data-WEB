@@ -429,107 +429,74 @@ body {
 .sheet-title-center h3 { font-size: 16px; font-weight: 800; color: #1a2744; letter-spacing: 1px; }
 .sheet-title-center p  { font-size: 11px; color: #8a9ab8; margin-top: 2px; }
 
-/* Data Sheet Form */
-.data-sheet-form {
-  border: 2px solid #1a2744;
-  border-radius: 4px;
-  overflow: hidden;
+/* ─── Tag Bar ──────────────────────────────────────────────── */
+.ds-tag-bar {
+  display: flex; align-items: center; gap: 20px;
+  padding: 8px 12px;
+  background: #f7f9fd;
+  border: 1px solid #dde3ee; border-radius: 6px;
+  margin-bottom: 8px; flex-wrap: wrap;
+}
+.ds-tag-item { display: flex; align-items: center; gap: 8px; }
+.ds-tag-lbl {
+  font-size: 11px; font-weight: 700; color: #5a6a8a;
+  text-transform: uppercase; letter-spacing: .5px; white-space: nowrap;
+}
+.ds-tag-inp {
+  border: 1px solid #c5d0e8; border-radius: 4px;
+  padding: 4px 8px; font-size: 13px; color: #1a2744;
+  font-weight: 700; background: #fff; width: 140px;
+}
+.ds-tag-inp:focus { outline: 1px solid #3b82f6; }
+
+/* ─── 12-Column Data Sheet Grid ────────────────────────────── */
+.ds-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  border: 1.5px solid #1a2744;
+  border-right: none; border-bottom: none;
+  width: 100%; margin-bottom: 12px;
   font-size: 12px;
 }
-
-.ds-section-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.ds-hdr {
+  background: #dde3ee; color: #1a2744;
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-align: center; padding: 6px 4px;
+  border-right: 1px solid #1a2744;
+  border-bottom: 1px solid #1a2744;
 }
-.ds-section-title {
-  background: #1a2744;
-  color: #fff;
-  padding: 6px 12px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-align: center;
-}
-
-.ds-row {
-  display: grid;
-  border-top: 1px solid #c5d0e8;
-}
-.ds-row:first-child { border-top: none; }
-
 .ds-cell {
-  border-right: 1px solid #c5d0e8;
-  padding: 0;
+  padding: 5px 7px;
+  border-right: 1px solid #b0bccc;
+  border-bottom: 1px solid #b0bccc;
+  min-height: 54px;
+  display: flex; flex-direction: column; justify-content: space-between;
 }
-.ds-cell:last-child { border-right: none; }
-
-.ds-label {
-  background: #f0f4fa;
-  padding: 4px 8px;
-  font-size: 10px;
-  font-weight: 800;
-  color: #2a3a5a;
-  letter-spacing: .3px;
-  border-bottom: 1px solid #c5d0e8;
-  text-transform: uppercase;
+.ds-pd {
+  border-left: 2px solid #1a2744 !important;
 }
-.ds-value {
-  padding: 4px 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 30px;
+.ds-lbl {
+  font-size: 9px; font-weight: 700;
+  text-transform: uppercase; color: #2d3f60;
+  letter-spacing: 0.3px; margin-bottom: 3px; line-height: 1.2;
 }
-.ds-value input {
-  border: none;
-  background: transparent;
-  font-size: 13px;
-  font-weight: 600;
-  color: #1a2744;
-  width: 100%;
-  padding: 0;
+.ds-grid input {
+  width: 100%; border: none; border-radius: 2px;
+  background: #c8dff5; padding: 3px 6px;
+  font-size: 12px; color: #1a2744; min-height: 22px;
 }
-.ds-value input:focus { outline: none; }
-.ds-value .unit {
-  color: #7a8aaa;
-  font-size: 11px;
-  white-space: nowrap;
-  flex-shrink: 0;
+.ds-grid input:focus { outline: 1px solid #3b82f6; background: #ddeeff; }
+.ds-grid input[readonly] { background: #e8f0fb; cursor: default; }
+.ds-ir {
+  display: flex; align-items: center; gap: 4px; width: 100%;
 }
-
-/* Bottom info row */
-.ds-node-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  border-top: 2px solid #1a2744;
-  align-items: center;
+.ds-ir input { flex: 1; min-width: 0; }
+.ds-ir span {
+  font-size: 10px; font-weight: 600; color: #2d3f60; white-space: nowrap;
 }
-.ds-node-label {
-  background: #1a2744; color: #fff;
-  padding: 6px 12px;
-  font-size: 10px; font-weight: 800; letter-spacing: 1px;
+.ds-il {
+  font-size: 10px; font-weight: 700; color: #2d3f60; white-space: nowrap;
 }
-.ds-node-value {
-  padding: 6px 12px;
-  display: flex; align-items: center; gap: 6px;
-}
-.ds-node-value input {
-  border: none; background: transparent;
-  font-size: 14px; font-weight: 700; color: #1a2744;
-  width: 120px;
-}
-.ds-node-value input:focus { outline: none; }
-.ds-node-right {
-  display: flex; align-items: center; gap: 12px;
-  padding: 6px 12px; border-left: 1px solid #c5d0e8;
-}
-.ds-tag-label { font-size: 10px; font-weight: 800; color: #5a6a8a; text-transform: uppercase; }
-.ds-tag-value input {
-  border: none; background: transparent;
-  font-size: 15px; font-weight: 800; color: #1a2744;
-  width: 100px;
-}
-.ds-tag-value input:focus { outline: none; }
 
 /* Revision block */
 .ds-rev-block {
@@ -562,8 +529,9 @@ body {
   .spring-sheet { display: block !important; page-break-after: always; }
   .spring-sheet:last-child { page-break-after: avoid; }
 
-  .ds-value input, .ds-node-value input, .ds-tag-value input,
+  .ds-grid input, .ds-tag-inp,
   .ds-rev-cell input, .sheet-title-field input {
     color: #000;
+    background: #fff !important;
   }
 }

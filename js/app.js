@@ -212,7 +212,10 @@ function processFiles() {
     ? parseRestraintReport(state.restraintFile.text)
     : null;
 
-  // 3b. Apply preview table overrides (tag, type, node edited by user)
+  // 3b. Apply preview table overrides + propagate global manufacturer
+  const globalMfr = $('manufacturer').value.trim();
+  if (globalMfr) state.springs.forEach(sp => { sp.manufacturer = globalMfr; });
+
   const overrides = getPreviewTableData();
   overrides.forEach((ov, i) => {
     if (!state.springs[i]) return;
@@ -347,8 +350,8 @@ function activateSheet(idx) {
 
 /* ── Sheet HTML builder ────────────────────────────────────── */
 function buildSheetHTML(s, g) {
-  const isVariable = s.type === 'Variable' || s.type === 'Variable (User)';
-  const isConstant = s.type === 'Constant';
+  const isVariable = ['Variable', 'Variable (User)', 'Hanger'].includes(s.type);
+  const isConstant = ['Constant', 'Can'].includes(s.type);
   const uF = g.units?.force  || 'N';
   const uL = g.units?.length || 'mm';
   const uD = g.units?.diam   || 'mm';
@@ -368,222 +371,161 @@ function buildSheetHTML(s, g) {
     varDisplay = (v * 100).toFixed(1) + ' %';
   }
 
+  const manufacturer = g.manufacturer || s.manufacturer || '';
+
   return `
   <!-- ── Title Block ── -->
   <div class="sheet-title-block">
     <div>
-      <div class="sheet-title-field">
-        <label>Design By</label>
-        <input value="${escHtml(g.designBy)}" placeholder="—">
-      </div>
-      <div class="sheet-title-field" style="margin-top:8px">
-        <label>Project Name</label>
-        <input value="${escHtml(g.projectName)}" placeholder="—">
-      </div>
-      <div class="sheet-title-field" style="margin-top:8px">
-        <label>Calc. Title</label>
-        <input value="${escHtml(g.calcTitle)}" placeholder="—">
-      </div>
+      <div class="sheet-title-field"><label>Design By</label><input value="${escHtml(g.designBy)}" placeholder="—"></div>
+      <div class="sheet-title-field" style="margin-top:8px"><label>Project Name</label><input value="${escHtml(g.projectName)}" placeholder="—"></div>
+      <div class="sheet-title-field" style="margin-top:8px"><label>Calc. Title</label><input value="${escHtml(g.calcTitle)}" placeholder="—"></div>
     </div>
-
     <div class="sheet-title-center">
       <h3>SPRING HANGER DATA SHEET</h3>
-      <p>${escHtml(s.type)}</p>
+      <p>${isConstant ? 'CONSTANT' : 'VARIABLE'}</p>
     </div>
-
     <div style="text-align:right">
-      <div class="sheet-title-field">
-        <label>Date</label>
-        <input value="${escHtml(g.date)}" placeholder="—">
-      </div>
-      <div class="sheet-title-field" style="margin-top:8px">
-        <label>Checked By</label>
-        <input value="${escHtml(g.checkedBy)}" placeholder="—">
-      </div>
+      <div class="sheet-title-field"><label>Date</label><input value="${escHtml(g.date)}" placeholder="—"></div>
+      <div class="sheet-title-field" style="margin-top:8px"><label>Checked By</label><input value="${escHtml(g.checkedBy)}" placeholder="—"></div>
     </div>
   </div>
 
-  <!-- ── Main Data Form ── -->
-  <div class="data-sheet-form">
+  <!-- ── Tag / Qty bar ── -->
+  <div class="ds-tag-bar">
+    <div class="ds-tag-item"><span class="ds-tag-lbl">Spring Tag No.</span><input class="ds-tag-inp" value="${escHtml(s.tag)}"></div>
+    <div class="ds-tag-item"><span class="ds-tag-lbl">Q'ty</span><input class="ds-tag-inp" value="${escHtml(String(s.numRqd || 1))}" style="width:50px"></div>
+    <div class="ds-tag-item"><span class="ds-tag-lbl">Document No.</span><input class="ds-tag-inp" value="" style="width:180px"></div>
+  </div>
 
-    <!-- Section headers -->
-    <div class="ds-section-header">
-      <div class="ds-section-title">SPRING  DATA</div>
-      <div class="ds-section-title">PIPING  DATA</div>
+  <!-- ── Main 12-column grid ── -->
+  <div class="ds-grid">
+
+    <!-- HEADERS -->
+    <div class="ds-hdr" style="grid-column:1/7">SPRING&nbsp;&nbsp;DATA</div>
+    <div class="ds-hdr ds-pd" style="grid-column:7/13">PIPING&nbsp;&nbsp;DATA</div>
+
+    <!-- ROW 1: MANUFACTURER | REF. LINE No. | STRESS SKETCH NUMBER -->
+    <div class="ds-cell" style="grid-column:1/7">
+      <div class="ds-lbl">MANUFACTURER</div>
+      <input value="${escHtml(manufacturer)}">
+    </div>
+    <div class="ds-cell ds-pd" style="grid-column:7/10">
+      <div class="ds-lbl">REF. LINE No.</div>
+      <input value="${escHtml(s.lineNo || '')}">
+    </div>
+    <div class="ds-cell" style="grid-column:10/13">
+      <div class="ds-lbl">STRESS SKETCH NUMBER</div>
+      <input value="">
     </div>
 
-    <!-- Row 1: MANUFACTURER | REF. LINE No. | STRESS SKETCH No. -->
-    <div class="ds-row" style="grid-template-columns:2fr 1.5fr 1.5fr">
-      <div class="ds-cell">
-        <div class="ds-label">Manufacturer</div>
-        <div class="ds-value"><input value="${escHtml(s.manufacturer || '')}"></div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Ref. Line No.</div>
-        <div class="ds-value"><input value="${escHtml(s.lineNo || '')}"></div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Stress Sketch Number</div>
-        <div class="ds-value"><input value=""></div>
-      </div>
+    <!-- ROW 2: FIG. No | TYPE | HYDRO-TEST LOAD | PIPE SIZE (NPS) | PIPE MATERIAL -->
+    <div class="ds-cell" style="grid-column:1/3">
+      <div class="ds-lbl">FIG. No</div>
+      <input value="${escHtml(s.figNo || '')}">
+    </div>
+    <div class="ds-cell" style="grid-column:3/5">
+      <div class="ds-lbl">TYPE</div>
+      <input value="${escHtml(s.type)}" readonly style="font-weight:700;color:#1d4ed8">
+    </div>
+    <div class="ds-cell" style="grid-column:5/7">
+      <div class="ds-lbl">HYDRO-TEST LOAD</div>
+      <div class="ds-ir"><input value="${fmtV(hydroLoad)}"><span>${escHtml(uF)}</span></div>
+    </div>
+    <div class="ds-cell ds-pd" style="grid-column:7/10">
+      <div class="ds-lbl">PIPE SIZE (NPS)</div>
+      <input value="${escHtml(s.size || '')}">
+    </div>
+    <div class="ds-cell" style="grid-column:10/13">
+      <div class="ds-lbl">PIPE MATERIAL</div>
+      <input value="${escHtml(s.material || '')}">
     </div>
 
-    <!-- Row 2: PIPE DESIGN/MIN TEMP | TYPE | SPRING RATE | VARIABILITY | PIPE MATERIAL -->
-    <div class="ds-row" style="grid-template-columns:2fr 1fr 1.2fr 1fr 1.8fr">
-      <div class="ds-cell">
-        <div class="ds-label">Pipe Design / Min Temperature</div>
-        <div class="ds-value">
-          <input value="${fmtV(s.temp1)}" style="width:70px" placeholder="Des">
-          <span class="unit">/</span>
-          <input value="${fmtV(s.temp3)}" style="width:70px" placeholder="Min">
-          <span class="unit">${escHtml(uT)}</span>
-        </div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Type</div>
-        <div class="ds-value">
-          <input value="${escHtml(s.type)}" readonly style="color:#1d4ed8;font-weight:800">
-        </div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Spring Rate (${escHtml(uR)})</div>
-        <div class="ds-value">
-          <input value="${fmtV(s.springRate)}" ${isConstant ? 'placeholder="N/A"' : ''}>
-          ${!isConstant ? `<span class="unit">${escHtml(uR)}</span>` : ''}
-        </div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Variability</div>
-        <div class="ds-value"><input value="${escHtml(varDisplay)}"></div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Pipe Material</div>
-        <div class="ds-value"><input value="${escHtml(s.material || '')}"></div>
-      </div>
+    <!-- ROW 3: HOT LOAD [+INSTALLED LOAD] | PIPE OPER. TEMP | PIPE DESIGN/MIN TEMP -->
+    ${isVariable ? `
+    <div class="ds-cell" style="grid-column:1/4">
+      <div class="ds-lbl">OPERATING (HOT) LOAD</div>
+      <div class="ds-ir"><input value="${fmtV(s.hotLoad)}"><span>${escHtml(uF)}</span></div>
     </div>
-
-    <!-- Row 3: OPERATING HOT LOAD | [INSTALLED LOAD if Variable] | PIPE OPER TEMP | PIPE SIZE NPS -->
-    <div class="ds-row" style="grid-template-columns:${isVariable ? '1.5fr 1.5fr' : '3fr'} 1.5fr 1.5fr">
-      <div class="ds-cell">
-        <div class="ds-label">Operating (Hot) Load</div>
-        <div class="ds-value">
-          <input value="${fmtV(s.hotLoad)}" style="width:100px">
-          <span class="unit">${escHtml(uF)}</span>
-        </div>
-      </div>
-      ${isVariable ? `
-      <div class="ds-cell">
-        <div class="ds-label">Installed Load (Theoretical)</div>
-        <div class="ds-value">
-          <input value="${fmtV(s.theoInstLoad)}" style="width:100px">
-          <span class="unit">${escHtml(uF)}</span>
-        </div>
-      </div>` : ''}
-      <div class="ds-cell">
-        <div class="ds-label">Pipe Oper. Temperature</div>
-        <div class="ds-value">
-          <input value="${fmtV(s.temp2)}" style="width:80px">
-          <span class="unit">${escHtml(uT)}</span>
-        </div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Pipe Size — OD (${escHtml(uD)})</div>
-        <div class="ds-value">
-          <input value="${fmtV(s.diameter)}" style="width:90px">
-          <span class="unit">${escHtml(uD)}</span>
-        </div>
+    <div class="ds-cell" style="grid-column:4/7">
+      <div class="ds-lbl">INSTALLED LOAD</div>
+      <div class="ds-ir"><input value="${fmtV(s.theoInstLoad)}"><span>${escHtml(uF)}</span></div>
+    </div>` : `
+    <div class="ds-cell" style="grid-column:1/7">
+      <div class="ds-lbl">OPERATING (HOT) LOAD</div>
+      <div class="ds-ir"><input value="${fmtV(s.hotLoad)}"><span>${escHtml(uF)}</span></div>
+    </div>`}
+    <div class="ds-cell ds-pd" style="grid-column:7/10">
+      <div class="ds-lbl">PIPE OPER. TEMPERATURE</div>
+      <div class="ds-ir"><input value="${fmtV(s.temp2)}"><span>${escHtml(uT)}</span></div>
+    </div>
+    <div class="ds-cell" style="grid-column:10/13">
+      <div class="ds-lbl">PIPE DESIGN / MIN TEMPERATURE</div>
+      <div class="ds-ir">
+        <input value="${fmtV(s.temp1)}" style="width:52px">
+        <span>&nbsp;/&nbsp;</span>
+        <input value="${fmtV(s.temp3)}" style="width:52px">
+        <span>${escHtml(uT)}</span>
       </div>
     </div>
 
-    <!-- Row 4: FIG. NO [+ Class + Assembly for Variable] | HYDRO-TEST LOAD | FLUID -->
-    <div class="ds-row" style="grid-template-columns:${isVariable ? '1fr 0.6fr 0.8fr' : '1fr'} 1.5fr 1.5fr">
-      <div class="ds-cell">
-        <div class="ds-label">Fig. No.</div>
-        <div class="ds-value"><input value="${escHtml(s.figNo || '')}"></div>
-      </div>
-      ${isVariable ? `
-      <div class="ds-cell">
-        <div class="ds-label">Class</div>
-        <div class="ds-value"><input value="C"></div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Assembly</div>
-        <div class="ds-value"><input value="1/1"></div>
-      </div>` : ''}
-      <div class="ds-cell">
-        <div class="ds-label">Hydro-Test Load</div>
-        <div class="ds-value">
-          <input value="${fmtV(hydroLoad)}" style="width:100px">
-          <span class="unit">${escHtml(uF)}</span>
-        </div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Fluid</div>
-        <div class="ds-value"><input value="${escHtml(g.fluid)}"></div>
-      </div>
+    <!-- ROW 4: SIZE [+SPRING RATE+VARIABILITY] | FLUID | INSULATION THICKNESS -->
+    ${isVariable ? `
+    <div class="ds-cell" style="grid-column:1/3">
+      <div class="ds-lbl">SIZE</div>
+      <input value="${escHtml(s.size || '')}">
+    </div>
+    <div class="ds-cell" style="grid-column:3/5">
+      <div class="ds-lbl">SPRING RATE</div>
+      <div class="ds-ir"><input value="${fmtV(s.springRate)}"><span>${escHtml(uR)}</span></div>
+    </div>
+    <div class="ds-cell" style="grid-column:5/7">
+      <div class="ds-lbl">VARIABILITY</div>
+      <input value="${escHtml(varDisplay)}">
+    </div>` : `
+    <div class="ds-cell" style="grid-column:1/7">
+      <div class="ds-lbl">SIZE</div>
+      <input value="${escHtml(s.size || '')}">
+    </div>`}
+    <div class="ds-cell ds-pd" style="grid-column:7/10">
+      <div class="ds-lbl">FLUID</div>
+      <input value="${escHtml(g.fluid)}">
+    </div>
+    <div class="ds-cell" style="grid-column:10/13">
+      <div class="ds-lbl">INSULATION THICKNESS</div>
+      <div class="ds-ir"><input value="${fmtV(s.insulThick)}"><span>${escHtml(uL)}</span></div>
     </div>
 
-    <!-- Row 5: SIZE | INSULATION THICKNESS | STRESS FILE NAME -->
-    <div class="ds-row" style="grid-template-columns:1fr 1.5fr 2fr">
-      <div class="ds-cell">
-        <div class="ds-label">Size (NPS / Catalog)</div>
-        <div class="ds-value">
-          <input value="${escHtml(s.size || '')}" style="width:60px">
-        </div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Insulation Thickness</div>
-        <div class="ds-value">
-          <input value="${fmtV(s.insulThick)}" style="width:80px">
-          <span class="unit">${escHtml(uL)}</span>
-        </div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Stress File Name</div>
-        <div class="ds-value"><input value="${escHtml(s.source || '')}"></div>
+    <!-- ROW 5: ACTUAL TRAVEL VERT. | STRESS FILE NAME | NODE NO. -->
+    <div class="ds-cell" style="grid-column:1/7">
+      <div class="ds-lbl">ACTUAL TRAVEL</div>
+      <div class="ds-ir">
+        <span class="ds-il">VERT.:</span>
+        <input value="${fmtV(s.vertMov)}" style="width:90px">
+        <span>${escHtml(uL)}</span>
       </div>
     </div>
-
-    <!-- Node / Travel / Tag row -->
-    <div class="ds-node-row">
-      <div class="ds-node-label">NODE NO.</div>
-      <div class="ds-node-value">
-        <input value="${escHtml(s.node)}" style="width:80px">
-        <span class="unit" style="font-size:13px;font-weight:700;color:#c5d0e8">|</span>
-        <span class="unit">ACTUAL TRAVEL VERT.:</span>
-        <input value="${fmtV(s.vertMov)}" style="width:100px">
-        <span class="unit">${escHtml(uL)}</span>
-      </div>
-      <div class="ds-node-right">
-        <span class="ds-tag-label">Spring Tag No.</span>
-        <div class="ds-tag-value"><input value="${escHtml(s.tag)}"></div>
-      </div>
+    <div class="ds-cell ds-pd" style="grid-column:7/11">
+      <div class="ds-lbl">STRESS FILE NAME:</div>
+      <input value="${escHtml(s.source || '')}">
+    </div>
+    <div class="ds-cell" style="grid-column:11/13">
+      <div class="ds-lbl">NODE NO.</div>
+      <input value="${escHtml(s.node)}">
     </div>
 
-    <!-- Qty / Document No row -->
-    <div class="ds-row" style="grid-template-columns:1fr 1fr">
-      <div class="ds-cell">
-        <div class="ds-label">Q'ty of Assembly</div>
-        <div class="ds-value"><input value="${escHtml(String(s.numRqd || 1))}"></div>
-      </div>
-      <div class="ds-cell">
-        <div class="ds-label">Document No.</div>
-        <div class="ds-value"><input value=""></div>
-      </div>
-    </div>
+  </div><!-- /ds-grid -->
 
-    <!-- Revision block -->
-    <div class="ds-rev-block">
-      <div class="ds-rev-cell"><label>Sht of</label><input value=""></div>
-      <div class="ds-rev-cell"><label>Rev</label><input value=""></div>
-      <div class="ds-rev-cell"><label>Date</label><input value="${escHtml(g.date)}"></div>
-      <div class="ds-rev-cell"><label>Description</label><input value="Issued for Design"></div>
-      <div class="ds-rev-cell"><label>By</label><input value="${escHtml(g.designBy)}"></div>
-      <div class="ds-rev-cell"><label>Chk</label><input value="${escHtml(g.checkedBy)}"></div>
-      <div class="ds-rev-cell"><label>App</label><input value=""></div>
-    </div>
-
-  </div><!-- /data-sheet-form -->
+  <!-- Revision block -->
+  <div class="ds-rev-block">
+    <div class="ds-rev-cell"><label>Sht of</label><input value=""></div>
+    <div class="ds-rev-cell"><label>Rev</label><input value=""></div>
+    <div class="ds-rev-cell"><label>Date</label><input value="${escHtml(g.date)}"></div>
+    <div class="ds-rev-cell"><label>Description</label><input value="Issued for Design"></div>
+    <div class="ds-rev-cell"><label>By</label><input value="${escHtml(g.designBy)}"></div>
+    <div class="ds-rev-cell"><label>Chk</label><input value="${escHtml(g.checkedBy)}"></div>
+    <div class="ds-rev-cell"><label>App</label><input value=""></div>
+  </div>
   `;
 }
 
