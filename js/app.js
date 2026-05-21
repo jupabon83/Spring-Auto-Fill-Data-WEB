@@ -49,7 +49,7 @@ function addPreviewRow(data = {}) {
   const tr    = document.createElement('tr');
 
   const typeOpts = TYPE_OPTIONS.map(t =>
-    `<option value="${t}" ${data.type === t ? 'selected' : ''}>${t}</option>`
+    `<option value="${t}" ${data.arrangement === t ? 'selected' : ''}>${t}</option>`
   ).join('');
 
   tr.innerHTML = `
@@ -64,9 +64,9 @@ function addPreviewRow(data = {}) {
 function getPreviewTableData() {
   const tbody = $('spring-preview-body');
   return Array.from(tbody.rows).map(row => ({
-    tag:  row.cells[1].querySelector('input').value.trim(),
-    type: row.cells[2].querySelector('select').value,
-    node: row.cells[3].querySelector('input').value.trim(),
+    tag:         row.cells[1].querySelector('input').value.trim(),
+    arrangement: row.cells[2].querySelector('select').value,
+    node:        row.cells[3].querySelector('input').value.trim(),
   })).filter(r => r.tag || r.node);
 }
 
@@ -219,9 +219,10 @@ function processFiles() {
   const overrides = getPreviewTableData();
   overrides.forEach((ov, i) => {
     if (!state.springs[i]) return;
-    if (ov.tag)  state.springs[i].tag  = ov.tag;
-    if (ov.type) state.springs[i].type = ov.type;
-    if (ov.node) state.springs[i].node = ov.node;
+    if (ov.tag)         state.springs[i].tag         = ov.tag;
+    if (ov.arrangement) state.springs[i].arrangement = ov.arrangement;
+    if (ov.node)        state.springs[i].node        = ov.node;
+    // NOTE: s.type is never overridden here — it comes exclusively from the Caesar II parser
   });
 
   // 4. Cross-reference
@@ -272,6 +273,7 @@ function renderSpringTable() {
       <td><strong>${escHtml(s.tag)}</strong></td>
       <td>${escHtml(s.node)}</td>
       <td><span class="type-badge ${typeBadgeClass(s.type)}">${escHtml(s.type)}</span></td>
+      <td>${escHtml(s.arrangement || '—')}</td>
       <td>${escHtml(s.catalogType || '—')}</td>
       <td>${escHtml(s.numRqd != null ? String(s.numRqd) : '—')}</td>
       <td>${escHtml(s.size  || '—')}</td>
@@ -351,8 +353,9 @@ function activateSheet(idx) {
 
 /* ── Sheet HTML builder ────────────────────────────────────── */
 function buildSheetHTML(s, g) {
-  const isVariable = ['Variable', 'Variable (User)', 'Hanger'].includes(s.type);
-  const isConstant = ['Constant', 'Can'].includes(s.type);
+  // Sheet layout driven solely by Caesar II parsed type — arrangement (Can/Hanger) is independent
+  const isVariable = ['Variable', 'Variable (User)'].includes(s.type);
+  const isConstant = s.type === 'Constant';
   const uF = g.units?.force  || 'N';
   const uL = g.units?.length || 'mm';
   const uD = g.units?.diam   || 'mm';

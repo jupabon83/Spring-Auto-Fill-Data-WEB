@@ -81,7 +81,7 @@ function _parseOneSpringFile(text, filename) {
       else if (/USER\s+SPECIFIED/i.test(line))       type = 'Variable (User)';
 
       lastSpring = {
-        tag: '', node, numRqd, figNo: '', catalogType: '', size,
+        tag: '', node, numRqd, figNo: '', catalogType: '', arrangement: '', size,
         vertMov, hotLoad, theoInstLoad, actInstLoad,
         springRate, horMov, type,
         manufacturer: null, variability: null,
