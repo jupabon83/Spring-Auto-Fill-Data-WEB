@@ -327,41 +327,40 @@ function parseRestraintReport(text) {
     const line = lines[i];
     if (!line.trim()) continue;
 
-    // Node header line: starts at column 0 with a node number
-    // e.g. "1070   TYPE=Prog Design  CSH;"  or simply "1070"
-    const nodeMatch = line.match(/^(\d{3,6}(?:\.\d+)?)\s*(?:TYPE=.*|;.*|$)/i);
-    if (nodeMatch && !/^\s/.test(line)) {
+    // Skip MAX summary lines
+    if (/^\s*MAX\s/i.test(line)) continue;
+
+    // Load case line: indented (tabs/spaces) then "3(OPE)" pattern with parentheses
+    // e.g. "\t\t  3(OPE)\t      507\t     -308\t..."
+    const caseMatch = line.match(/^\s+(\d{1,3}\([A-Z0-9]+\))\s+(.*)/i);
+    if (caseMatch && currentNode) {
+      const caseLabel = caseMatch[1].trim();   // e.g. "3(OPE)"
+      // Values are TAB-separated with leading spaces on each field — trim each segment
+      const values = caseMatch[2].split('\t').map(v => v.trim()).filter(v => v !== '');
+      nodes[currentNode][caseLabel] = {
+        FX: _fNum(values[0]),
+        FY: _fNum(values[1]),
+        FZ: _fNum(values[2]),
+        MX: _fNum(values[3]),
+        MY: _fNum(values[4]),
+        MZ: _fNum(values[5]),
+        DX: _fNum(values[6]),
+        DY: _fNum(values[7]),
+        DZ: _fNum(values[8]),
+      };
+      continue;
+    }
+
+    // Node header line: 0-3 leading spaces + node number + whitespace + TYPE= or ;
+    // e.g. " 1070\t\tTYPE=Prog Design  CSH;"
+    const nodeMatch = line.match(/^[ \t]{0,3}(\d{3,6}(?:\.\d+)?)[ \t]+(?:TYPE=|;)/i)
+                   || line.match(/^[ \t]{0,3}(\d{3,6}(?:\.\d+)?)[ \t]*$/);
+    if (nodeMatch) {
       currentNode = String(Math.round(parseFloat(nodeMatch[1])));
       if (!nodes[currentNode]) nodes[currentNode] = {};
       continue;
     }
 
-    // Load case line: indented, starts with case label like "  3(OPE)" or "     10(SUS)"
-    // Allow any amount of leading whitespace; case type may include digits (OCC1, HYD1)
-    if (currentNode) {
-      const caseMatch = line.match(/^\s+(\d{1,3}\([A-Z0-9]+\))\s+([-\d].*)/i);
-      if (caseMatch) {
-        const caseLabel = caseMatch[1].trim();    // e.g. "3(OPE)"
-        const values    = caseMatch[2].trim().split(/\s+/);
-        nodes[currentNode][caseLabel] = {
-          FX: _fNum(values[0]),
-          FY: _fNum(values[1]),
-          FZ: _fNum(values[2]),
-          MX: _fNum(values[3]),
-          MY: _fNum(values[4]),
-          MZ: _fNum(values[5]),
-          DX: _fNum(values[6]),
-          DY: _fNum(values[7]),
-          DZ: _fNum(values[8]),
-        };
-        continue;
-      }
-
-      // MAX line — skip
-      if (/^\s+MAX\s/i.test(line)) continue;
-
-      // If we hit a line that doesn't match, it might be a new node block
-    }
   }
 
   if (Object.keys(nodes).length === 0)
