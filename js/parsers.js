@@ -327,19 +327,19 @@ function parseRestraintReport(text) {
     const line = lines[i];
     if (!line.trim()) continue;
 
-    // Node header line: starts with a node number (possibly with decimal)
-    // e.g. "1070   TYPE=Prog Design  CSH;"
-    const nodeMatch = line.match(/^(\d{3,6}(?:\.\d+)?)\s+(?:TYPE=|$)/i)
-                   || line.match(/^(\d{3,6}(?:\.\d+)?)\s*$/);
-    if (nodeMatch) {
+    // Node header line: starts at column 0 with a node number
+    // e.g. "1070   TYPE=Prog Design  CSH;"  or simply "1070"
+    const nodeMatch = line.match(/^(\d{3,6}(?:\.\d+)?)\s*(?:TYPE=.*|;.*|$)/i);
+    if (nodeMatch && !/^\s/.test(line)) {
       currentNode = String(Math.round(parseFloat(nodeMatch[1])));
       if (!nodes[currentNode]) nodes[currentNode] = {};
       continue;
     }
 
-    // Load case line: starts with spaces then case label like "  3(OPE)" or " 10(SUS)"
+    // Load case line: indented, starts with case label like "  3(OPE)" or "     10(SUS)"
+    // Allow any amount of leading whitespace; case type may include digits (OCC1, HYD1)
     if (currentNode) {
-      const caseMatch = line.match(/^\s{1,5}(\d{1,3}\([A-Z]+\))\s+(.*)/i);
+      const caseMatch = line.match(/^\s+(\d{1,3}\([A-Z0-9]+\))\s+([-\d].*)/i);
       if (caseMatch) {
         const caseLabel = caseMatch[1].trim();    // e.g. "3(OPE)"
         const values    = caseMatch[2].trim().split(/\s+/);
@@ -382,6 +382,28 @@ function parseRestraintReport(text) {
      temp3Case: "7(OPE)",
    }
    ──────────────────────────────────────────────────────────── */
+
+/* Helper: find a case entry in a nodeCases map using flexible matching.
+   Priority: 1) exact match  2) case whose label starts with the requested prefix number
+   e.g. hydroCase="3(OPE)" → exact; hydroCase="3" → matches "3(OPE)", "3(SUS)", etc. (picks first) */
+function _findCase(nodeCases, caseKey) {
+  if (!nodeCases || !caseKey) return null;
+  const key = caseKey.trim();
+  // 1. Exact match
+  if (nodeCases[key]) return nodeCases[key];
+  // 2. Prefix-number match: user typed "3", file has "3(OPE)"
+  const numOnly = key.match(/^(\d+)$/);
+  if (numOnly) {
+    const prefix = numOnly[1] + '(';
+    const found = Object.keys(nodeCases).find(k => k.startsWith(prefix));
+    if (found) return nodeCases[found];
+  }
+  // 3. Case-insensitive exact
+  const keyUp = key.toUpperCase();
+  const ci = Object.keys(nodeCases).find(k => k.toUpperCase() === keyUp);
+  if (ci) return nodeCases[ci];
+  return null;
+}
 
 function crossReference(springs, eledata, restraint, settings = {}) {
   const hydroCase = (settings.hydroCase || '3(OPE)').trim();
@@ -431,12 +453,18 @@ function crossReference(springs, eledata, restraint, settings = {}) {
 
   // ── Restraint Report cross-reference ──────────────────────
   if (restraint && restraint.nodes) {
+    console.log('[Restraint] nodes found:', Object.keys(restraint.nodes).join(', '));
+    console.log('[Restraint] looking for hydroCase:', hydroCase);
     for (const s of springs) {
       const nodeCases = restraint.nodes[s.node];
-      if (!nodeCases) continue;
+      if (!nodeCases) {
+        console.warn(`[Restraint] node ${s.node} NOT found in restraint report`);
+        continue;
+      }
+      console.log(`[Restraint] node ${s.node} cases:`, Object.keys(nodeCases).join(', '));
 
-      // Hydro test load = FY at hydrotest case
-      const hydroRow = nodeCases[hydroCase];
+      // Hydro test load = FY at hydrotest case (flexible case-label matching)
+      const hydroRow = _findCase(nodeCases, hydroCase);
       if (hydroRow && hydroRow.FY != null) s.hydroLoad = hydroRow.FY;
 
       // For Variable (User): hot load and vert movement come from the restraint report
