@@ -67,14 +67,17 @@ function _parseOneSpringFile(text, filename) {
     const nodeMatch = line.match(/^\s{2,10}(\d{3,6})\s/);
     if (nodeMatch) {
       const node         = nodeMatch[1];
-      const numRqd       = _fNum(_fld(line, colPos, 1)) || 1;  // RQD column (pos 1)
-      const size         = _fld(line, colPos, 2).trim();
-      const vertMov      = _fNum(_fld(line, colPos, 3));
-      const hotLoad      = _fNum(_fld(line, colPos, 4));
-      const theoInstLoad = _fNum(_fld(line, colPos, 5));
-      const actInstLoad  = _fNum(_fld(line, colPos, 6));
-      const springRate   = _fNum(_fld(line, colPos, 7));
-      const horMov       = _fNum(_fld(line, colPos, 8));
+      // Column layout (from separator +-----+-----+----+---(mm.)--+--( N.)--+...):
+      // pos[0]=NODE  pos[1]=RQD  pos[2]=FIG.NO  pos[3]=SIZE  pos[4]=VERT.MOV
+      // pos[5]=HOT LOAD  pos[6]=THEO INST  pos[7]=ACT INST  pos[8]=SPRING RATE  pos[9]=HOR.MOV
+      const numRqd       = _fNum(_fld(line, colPos, 1)) || 1;
+      const size         = _fld(line, colPos, 3).trim();   // pos[3] = SIZE
+      const vertMov      = _fNum(_fld(line, colPos, 4));   // pos[4] = VERT.MOV
+      const hotLoad      = _fNum(_fld(line, colPos, 5));   // pos[5] = HOT LOAD
+      const theoInstLoad = _fNum(_fld(line, colPos, 6));   // pos[6] = THEO INST
+      const actInstLoad  = _fNum(_fld(line, colPos, 7));   // pos[7] = ACT INST
+      const springRate   = _fNum(_fld(line, colPos, 8));   // pos[8] = SPRING RATE
+      const horMov       = _fNum(_fld(line, colPos, 9));   // pos[9] = HOR.MOV
 
       let type = 'Variable';
       if (line.includes('CONSTANT EFFORT SUPPORT'))  type = 'Constant';
@@ -308,9 +311,9 @@ function parseRestraintReport(text) {
 
   for (let i = 0; i < lines.length; i++) {
     const upper = lines[i].toUpperCase();
-    if (upper.includes('NODE') && upper.includes('LOAD CASE') && upper.includes('FY')) {
+    // "Load Case" spans two lines (Load[TAB]...Case) — match just NODE + FY on same line
+    if (upper.includes('NODE') && upper.includes('FY') && !upper.includes('CASE DEFINITION')) {
       headerIdx = i;
-      colNames  = lines[i].trim().split(/\s{2,}/).map(c => c.trim());
       break;
     }
   }
