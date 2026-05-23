@@ -351,6 +351,84 @@ function activateSheet(idx) {
   document.querySelectorAll('.spring-sheet').forEach((s, i) => s.classList.toggle('active', i === idx));
 }
 
+/* ── Spring arrangement sketch SVGs ───────────────────────── */
+function arrangementSVG(arrangement) {
+  if (arrangement === 'Hanger') {
+    return `<svg viewBox="0 0 110 220" width="110" height="220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Structural beam top -->
+      <rect x="10" y="0" width="90" height="14" fill="#d6dbe8" stroke="#1a2744" stroke-width="1.2"/>
+      <!-- Vertical centerline -->
+      <line x1="55" y1="14" x2="55" y2="216" stroke="#1a2744" stroke-width="0.6" stroke-dasharray="5,3"/>
+      <!-- Top attachment rod -->
+      <rect x="51" y="14" width="8" height="20" fill="#b0bccc" stroke="#1a2744" stroke-width="1"/>
+      <!-- Top adjustment nut -->
+      <polygon points="43,34 67,34 70,40 40,40" fill="#8a9ab8" stroke="#1a2744" stroke-width="1"/>
+      <!-- Rod between nut and spring body -->
+      <rect x="52" y="40" width="6" height="18" fill="#c5cfe0" stroke="#1a2744" stroke-width="0.8"/>
+      <!-- Spring hanger casing outer -->
+      <rect x="28" y="58" width="54" height="88" rx="3" fill="#eef1f7" stroke="#1a2744" stroke-width="1.4"/>
+      <!-- Casing inner panel -->
+      <rect x="34" y="64" width="42" height="76" rx="2" fill="#f7f9fd" stroke="#1a2744" stroke-width="0.7"/>
+      <!-- Spring coils (horizontal lines) -->
+      <line x1="34" y1="76"  x2="76" y2="76"  stroke="#3a4f70" stroke-width="0.9"/>
+      <line x1="34" y1="84"  x2="76" y2="84"  stroke="#3a4f70" stroke-width="0.9"/>
+      <line x1="34" y1="92"  x2="76" y2="92"  stroke="#3a4f70" stroke-width="0.9"/>
+      <line x1="34" y1="100" x2="76" y2="100" stroke="#3a4f70" stroke-width="0.9"/>
+      <line x1="34" y1="108" x2="76" y2="108" stroke="#3a4f70" stroke-width="0.9"/>
+      <line x1="34" y1="116" x2="76" y2="116" stroke="#3a4f70" stroke-width="0.9"/>
+      <line x1="34" y1="124" x2="76" y2="124" stroke="#3a4f70" stroke-width="0.9"/>
+      <!-- Bottom adjustment nut -->
+      <polygon points="40,146 70,146 67,152 43,152" fill="#8a9ab8" stroke="#1a2744" stroke-width="1"/>
+      <!-- Bottom rod -->
+      <rect x="52" y="152" width="6" height="18" fill="#c5cfe0" stroke="#1a2744" stroke-width="0.8"/>
+      <!-- Pipe cross section top ellipse -->
+      <ellipse cx="55" cy="178" rx="22" ry="9" fill="#eef1f7" stroke="#1a2744" stroke-width="1.4"/>
+      <ellipse cx="55" cy="178" rx="14" ry="6" fill="#dde3ee" stroke="#1a2744" stroke-width="0.8"/>
+      <!-- Pipe walls -->
+      <line x1="33" y1="178" x2="33" y2="216" stroke="#1a2744" stroke-width="1.4"/>
+      <line x1="77" y1="178" x2="77" y2="216" stroke="#1a2744" stroke-width="1.4"/>
+      <line x1="41" y1="183" x2="41" y2="216" stroke="#1a2744" stroke-width="0.8"/>
+      <line x1="69" y1="183" x2="69" y2="216" stroke="#1a2744" stroke-width="0.8"/>
+    </svg>`;
+  }
+  if (arrangement === 'Can') {
+    return `<svg viewBox="0 0 110 220" width="110" height="220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Ball / rod-end joint at top -->
+      <circle cx="55" cy="14" r="13" fill="#eef1f7" stroke="#1a2744" stroke-width="1.3"/>
+      <circle cx="47" cy="9"  r="9"  fill="#eef1f7" stroke="#1a2744" stroke-width="1.3"/>
+      <!-- Vertical centerline -->
+      <line x1="55" y1="27" x2="55" y2="216" stroke="#1a2744" stroke-width="0.6" stroke-dasharray="5,3"/>
+      <!-- Top rod -->
+      <rect x="51" y="27" width="8" height="28" fill="#c5cfe0" stroke="#1a2744" stroke-width="1"/>
+      <!-- Top flange plate -->
+      <rect x="33" y="55" width="44" height="7" fill="#8a9ab8" stroke="#1a2744" stroke-width="1.3"/>
+      <!-- Can body outer -->
+      <rect x="37" y="62" width="36" height="78" fill="#eef1f7" stroke="#1a2744" stroke-width="1.4"/>
+      <!-- Can body inner detail (spring mechanism window) -->
+      <rect x="43" y="70" width="11" height="30" rx="1" fill="#dde3ee" stroke="#1a2744" stroke-width="0.8"/>
+      <!-- Internal spring indicator lines -->
+      <line x1="43" y1="78" x2="54" y2="78" stroke="#3a4f70" stroke-width="0.8"/>
+      <line x1="43" y1="85" x2="54" y2="85" stroke="#3a4f70" stroke-width="0.8"/>
+      <line x1="43" y1="92" x2="54" y2="92" stroke="#3a4f70" stroke-width="0.8"/>
+      <line x1="43" y1="99" x2="54" y2="99" stroke="#3a4f70" stroke-width="0.8"/>
+      <!-- Bottom flange plate -->
+      <rect x="33" y="140" width="44" height="7" fill="#8a9ab8" stroke="#1a2744" stroke-width="1.3"/>
+      <!-- Base plate -->
+      <rect x="24" y="147" width="62" height="10" fill="#d6dbe8" stroke="#1a2744" stroke-width="1.3"/>
+      <!-- Foundation line -->
+      <line x1="14" y1="157" x2="96" y2="157" stroke="#1a2744" stroke-width="2"/>
+      <!-- Foundation hatching -->
+      <line x1="14" y1="164" x2="24" y2="157" stroke="#1a2744" stroke-width="0.9"/>
+      <line x1="26" y1="164" x2="38" y2="157" stroke="#1a2744" stroke-width="0.9"/>
+      <line x1="40" y1="164" x2="52" y2="157" stroke="#1a2744" stroke-width="0.9"/>
+      <line x1="54" y1="164" x2="66" y2="157" stroke="#1a2744" stroke-width="0.9"/>
+      <line x1="68" y1="164" x2="80" y2="157" stroke="#1a2744" stroke-width="0.9"/>
+      <line x1="82" y1="164" x2="96" y2="157" stroke="#1a2744" stroke-width="0.9"/>
+    </svg>`;
+  }
+  return ''; // no arrangement selected
+}
+
 /* ── Sheet HTML builder ────────────────────────────────────── */
 function buildSheetHTML(s, g) {
   // Sheet layout driven solely by Caesar II parsed type — arrangement (Can/Hanger) is independent
@@ -394,6 +472,9 @@ function buildSheetHTML(s, g) {
       <div class="sheet-title-field" style="margin-top:8px"><label>Checked By</label><input value="${escHtml(g.checkedBy)}" placeholder="—"></div>
     </div>
   </div>
+
+  <!-- ── Arrangement sketch ── -->
+  ${arrangementSVG(s.arrangement) ? `<div class="ds-arrangement-img">${arrangementSVG(s.arrangement)}</div>` : ''}
 
   <!-- ── Tag / Qty bar ── -->
   <div class="ds-tag-bar">

@@ -429,6 +429,20 @@ body {
 .sheet-title-center h3 { font-size: 16px; font-weight: 800; color: #1a2744; letter-spacing: 1px; }
 .sheet-title-center p  { font-size: 11px; color: #8a9ab8; margin-top: 2px; }
 
+/* ─── Arrangement sketch ───────────────────────────────────── */
+.ds-arrangement-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0 6px;
+  border-bottom: 1px solid #dde3ee;
+  margin-bottom: 6px;
+  background: #f7f9fd;
+}
+.ds-arrangement-img svg {
+  display: block;
+}
+
 /* ─── Tag Bar ──────────────────────────────────────────────── */
 .ds-tag-bar {
   display: flex; align-items: center; gap: 20px;
